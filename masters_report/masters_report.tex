@@ -310,14 +310,14 @@ in our heavily data-centric world.
 \indent
 With mobile web browsers holding around eight percent of the global
 browser market share in terms of usage, web development for these
-platforms is becoming critically more important as usage moves from the
+platforms is becoming critically important as usage moves from the
 desktop towards mobile devices. Recent advances in client side browser
 technology like HTML5 and WebSockets have allowed web browser
 applications to approach feature parity with thick client desktop
 applications. This paper explores the possibility of a real-time online
 multiplayer game playable from just a mobile device's web browser. It
 does not focus on gameplay or graphics, rather it focuses on the backend
-infrastructure needed to implement such a game. The framework devised to
+infrastructure needed to support such a game. The framework devised to
 support this sort of interaction, Marionette, is well suited towards
 addressing sharing of location-specific, short-lived information between
 people using their smartphones without the use of any external software
@@ -350,34 +350,37 @@ or proprietary software packages on the client side.
 This paper presents a framework called Marionette for the storage and
 querying of spatio-temporal events within the mobile computing domain.
 It leverages technology available in mobile browsers today, allowing
-them to serve as location aware clients which can execute queries and
-create events relative to the device's current position. The events are
+them to serve as location aware clients that can execute queries and
+create events relative to a particular mobile device's current position. The events are
 stored and queried within a network consisting of mobile device web
-browsers which are responsible for handling queries within a certain
+browsers that are responsible for handling queries within a certain
 geographical area referred to as a zone. Bridging the gap between all
 the web based clients is a reliable soft real-time communications
-backbone called Juggernaut. Juggernaut uses a channel-based pub-sub
-model which allows flexible levels of broadcast communication and even
-focused communication to one subscriber.
+backbone called Juggernaut \cite{juggernaut}. Juggernaut uses a channel-based pub-sub
+model that allows flexible levels of broadcast communication and even
+unicast communication to one subscriber.
 
 Most mobile network enabled games on the market today have to be
-implemented at least twice, once for iOS and once for Android. Most
+implemented at least twice, once for iOS and once for Android. Other
 developers opt to support one platform or the other due to the
 differences of the respective platforms. Additionally, there are several
-other mobile platforms that could be implemented but frequently are
+other mobile platforms that games could be implemented in but frequently are
 skipped over in favor of a mobile OS with more market penetration. Most
-of the major players in the mobile browser space use WebKit based
+of the major players in the mobile browser space use WebKit
+\footnote{The WebKit Open Source Project - \url{http://www.webkit.org/}} based
 implementations for their web browser, even those used in Blackberry and
 Symbian OS devices. The mobile browser space is becoming more attractive
-for game developers as well. The canvas element in HTML5 along with
+for game developers as well. The \texttt{<canvas>} element in 
+HTML5\footnote{HTML5 Standard - \url{http://html5.org/}} along with
 support for Scalable Vector Graphics (SVG) within WebKit supported
-browsers allows unparallelled graphics rendering capability without
+browsers allows for graphics rendering capability previously unseen without
 proprietary plugins such as Adobe Flash Player. It is possible today to
 make a simple two dimensional game in a mobile web browser and have the
-experience comparable to a two dimensional game written in its native
-OS. This paper does not focus on graphics specifically, but rather what
-it would take to effectively communicate between these client mobile web
-browsers in a socio-spatial fashion.
+experience comparable to a two dimensional game written in the device's native
+OS thus making them acceptable candidates for mobile game development. 
+This paper does not focus on graphics in lieu of what it would take to 
+effectively communicate between these client mobile web browsers in 
+spatio-temporal contexts.
 
 Marionette aims to enable distributed spatio-temporal information
 exchange via something as simple as opening a tab on a web browser on a
@@ -385,7 +388,7 @@ mobile (or even desktop) device. Client side web browsers have
 historically been limited in their capability for data storage and
 processing but are catching up to deliver rich interactive experiences
 that rival thick client applications. Most mobile device browsers have
-these capabilities now which is advantageous for Marionette because it
+these capabilities now, which is advantageous for Marionette because it
 has virtually no installation requirements. It operates under the hood
 within a browser session and presents the potential for not only content
 delivery via a web portal, but also for content absorption based on the
@@ -393,12 +396,12 @@ user's location and activities.
 
 Besides mobile gaming, Marionette has other potential uses. Picture a
 high profile public event such as Austin City Limits (ACL) or South by
-Southwest (SXSW) where event participants have a large thirst for
+Southwest (SXSW), where event participants have a large thirst for
 knowledge. These example events are musical in nature and have a lineup
-with events happening at various times. The acts are relatively short
+with events happening at various times. The acts are relatively short,
 but there are many happening concurrently. Event goers tend to migrate
-towards better live performances currently through word of mouth
-primarily through social networks like Twitter. With Marionette you
+towards better live performances discovered on-the-fly through word of mouth,
+primarily through social networks like Twitter. With Marionette one
 could provide a web portal specifically for attendees in a grassroots
 fashion where they can get the latest updates and inform other attendees
 if there is an act near them that is exceeding expectations and should
@@ -415,8 +418,8 @@ Space Battle! played within mobile browsers. The event and range query
 model work well for a number of multiplayer game mechanics such as
 determining the location of other players, trade and player vs. player
 combat. A mobile device's physical location determines where its
-starship is located inside the game and you can interact with players
-that share physical locality with you. To accomplish these gameplay
+starship is located inside the game, and a player can interact with other players
+that share physical locality. To accomplish these gameplay
 goals, Marionette is used as a medium for propagating in game events.
 
 \chapter{Related Work}
@@ -429,24 +432,24 @@ Marionette is based on the work presented in
 \cite{zio2011p2p} the authors create a Peer-to-Peer
 (P2P) network for the storage and query of short lived events with
 spatial context. The authors create a Voronoi tessellation based
-segmentation relative to the spatial locations of its nodes in its P2P
+segmentation relative to the spatial locations of the nodes in its P2P
 overlay network. Marionette uses a similar construct with regards to the
-creation of zones which are created based on physical locality, as well
-as adopting the same ``range query'' model. When resolving a range query
+creation of zones which, are created based on physical locality, as well
+as adopting the same ``range query'' model. When resolving a range query,
 Marionette gathers up a subset of zones within the radius of the query
 and broadcasts the request to them. If a client node matches the query,
 it sends the event(s) that matched to the node that originated the
 query. The pattern of resolving queries is similar to how it is
 performed in \cite{zio2011p2p}. Where Marionette
 differs is in the use of a centralized (but scalable) message broker
-which keeps tabs on the state of each node in the network as opposed to
+that keeps tabs on the state of each node in the network as opposed to
 being purely P2P. Another difference is that the mobile browsers
-themselves can become peers themselves without requiring proxy peers.
+themselves can become peers without requiring proxy peers.
 One disadvantage with Marionette's methodology is that there is a
 dependency on the message broker in favor of true P2P. The flow of
 events and then querying for them in \cite{zio2011p2p}
 is important towards realizing spatio-temporal information exchange
-amongst users which share physical locality.
+amongst users that share physical locality.
 
 In \cite{yoneki2007socio}, the authors create a
 Socio-Aware Overlay for Publish/Subscribe based communications for Delay
@@ -455,20 +458,20 @@ Centrality'' to determine broker nodes and communities, those with the
 shortest path to all of the other nodes. The zones in Marionette (known
 as communities in \cite{yoneki2007socio}) are defined
 by the Voronoi tessellation as defined in
-\cite{zio2011p2p} but the concept of using pub-sub to
+\cite{zio2011p2p}, but the concept of using pub-sub to
 facilitate communication is prevalent here. In Marionette, mobile
 clients can publish information as well as be subscribers in a few
 different levels of spatially progressive granularity. Distributing the
 events and queries within zones using a pub-sub methodology allows for
 more flexibility architecturally and allows for scalability where other
 P2P based approaches have to choose their routing protocols carefully
-and tie it specifically to a usage model. The flexibility and
-scalability is important towards utilizing Marionette for grassroots
+and tie it specifically to a usage model. Flexibility and
+scalability are important towards utilizing Marionette for grassroots
 deployments and online web gaming as described in the introduction.
 
-In \cite{wang2005event}, the authors define
+In \cite{wang2005event}, the authors define a
 spatio-temporal phenomenon as a collection of processes, entities, and
-events. Processes bind entities and events, events cause changes in the
+events. Processes bind entities and events, and events cause changes in the
 system. A similar concept is presented in
 \cite{chen1998event}. A stretch goal for this work is
 to be able to link the various game objects (entities) with events. The
@@ -477,28 +480,28 @@ which will be similar to a process described in this work.
 
 \section{Other Work}
 
-Other related work in the spatio-temporal area include PeopleNet
-\cite{motani2005peoplenet} where topic specific
+Other related work in the spatio-temporal area includes PeopleNet
+\cite{motani2005peoplenet}, where topic specific
 `bazaars' are created with the intent of answering topic specific
 queries. As \cite{zio2011p2p} mentions, this approach
 does not preserve locality in storage. The only commonality that
 Marionette has with the bazaar concept is locality in querying. FLORA
 \cite{kokku2008enabling} is similar in the sense that
-it uses a hybrid P2P and pub-sub architecture but Marionette spreads the
-data throughout the network. Additionally, this work does not focus on
+it uses a hybrid P2P and pub-sub architecture, but Marionette spreads the
+data throughout the network. Additionally, Marionette does not focus on
 networking at the carrier level like FLORA does. It is assumed that the
 query propagation bandwidth in this work will be inconsequential next to
 audio and visual streaming allowed by most carriers today.
 
 Gander \cite{michel2011gander} is a personalized search
-engine for discovering the ``ground truth'' i.e. short lived information
+engine for discovering the ``ground truth'' i.e., short lived information
 with a spatio-temporal context. The authors insert a relevance component
 into their spatio-temporal data model which aims to rank the search
 results based on what the user is looking for. Gander shares a similar
 end goal with Marionette but their architecture is distributed and does
 not utilize a central message broker. GeoRel
 \cite{reichenbacher2009geo} is an extension on
-traditional location based information systems where spatial, temporal
+traditional location based information systems where spatial, temporal,
 and motivational considerations are mixed in. GeoRel mainly focuses on
 assigning relevance of static entities to mobile devices. Marionette
 differs because there are no static entities; all of the information
@@ -507,17 +510,17 @@ contained within the system is dynamic.
 WebPark \cite{mountain2007geo} introduces post-query
 filters to traditional Global Information Retrieval (GIR) systems adding
 additional geographical context. The most interesting post-query filter
-added the notion of speed-heading to query results. Based on your
-current speed and heading you could retrieve results along your future
+added the notion of speed-heading to query results. Based on a mobile device's
+current speed and heading, a user could retrieve results along his future
 path. Marionette does not currently implement some of the extended
-querying capabilities presented in WebPark opting for multiple
+querying capabilities presented in WebPark, opting for multiple
 successive range queries as the user's location changes over time
 instead. In Secondo \cite{teixeira2006querying}, the
 authors create a data model and query language for information retrieval
 of moving objects in time and space. The work focuses on extending more
-traditional Database Management Systems (DBMS) which implies that the
+traditional Database Management Systems (DBMS), which implies that the
 data be centrally located. With Marionette, the data is distributed
-amongst its client nodes which are moving themselves and queried at
+amongst its client nodes, which are moving themselves and queried at
 successive time intervals.
 
 \chapter{Technology}
@@ -527,18 +530,18 @@ successive time intervals.
 Marionette consists of a pub-sub service provided by Juggernaut backed
 by a Redis data store, and a lightweight web application framework
 called Sinatra. Together they allow soft real-time communication between
-the mobile devices who are playing the Space Battle! game. Figure
+the mobile devices that are playing the Space Battle! game. Figure
 \ref{hla} shows the High Level Architecture (HLA) of
-Marionette. It also outlines the concept of zones which are polygons in
-the Voronoi tessellation and clients distributed within them. Node three
+Marionette. It also outlines the concept of zones, which are polygons in
+the Voronoi tessellation, and clients distributed within them. Node three
 makes a range query with radius r and its current location l and
 executes a POST operation to the web server. The server calculates the
-zones which overlap the space defined by the range query in orange and
+zones that overlap the space defined by the range query in orange and
 publishes the query to them. The clients in the three zones are notified
-of the query and if any client has an event which matches the query it
+of the query and if any client has an event that matches the query, it
 gets sent back to node three. If there are multiple matches from
 different nodes, node three will also receive them. It is expected that
-the node which generated the range query will receive the responses
+the node that generated the range query will receive the responses
 asynchronously within a set time window and can then act on any
 responses received at the end of that time interval.
 
@@ -553,7 +556,7 @@ responses received at the end of that time interval.
 
 \subsection{Node.js}
 
-Node.js is an event driven software system which is built from the
+Node.js is an event driven software system that is built from the
 ground up to have asynchronous I/O. This allows Node.js applications,
 which are mainly server based, to be highly scalable while minimizing
 overhead with non-blocking I/O. Node.js excels at simple POST and GET
@@ -568,7 +571,7 @@ soft real-time connection to clients. It is built on top of Node.js and
 is geared towards communication with client web browsers. It supports a
 myriad of different browser networking protocols through the use of
 Socket.IO, most notably WebSocket and Adobe Flash Socket. Socket.IO is
-an extension of WebSocket which adds support for heartbeats, timeouts
+an extension of WebSocket that adds support for heartbeats, timeouts,
 and disconnection support for use in soft real-time web applications
 like Marionette. If the client browser does not support WebSockets, it
 will fall back to a networking protocol that is supported. Clients can
@@ -579,8 +582,8 @@ on the client side.
 
 Redis is a networked lightweight in-memory key-value data store. The
 whole dataset is stored in RAM, but Redis can optionally be configured
-for persistence fulfilling durability requirements. Redis also supports
-master-slave replication which allows Redis to become decentralized. A
+for persistence, fulfilling durability requirements. Redis also supports
+master-slave replication, which allows Redis to become decentralized. A
 unique aspect of Redis is that the values it stores can be more than
 just strings. It can store data types such as lists of strings, sets of
 strings, sorted sets of strings, and hashes. There are commands that are
@@ -591,9 +594,9 @@ can provide channel/subscriber data quickly to Node.js connections.
 
 \subsection{Sinatra}
 
-Sinatra is a lightweight web application framework which abstracts
+Sinatra is a lightweight web application framework that abstracts
 server-side web development in a clean Domain Specific Language (DSL).
-It is widely regarded as a barebones Ruby on Rails although there are
+It is widely regarded as a barebones Ruby on Rails (RoR), although there are
 features in RoR that Sinatra can only gain through the use of add-ons.
 Several HTML templating options are available for use with Sinatra
 making it easy to create simple data and event driven websites. In this
@@ -606,13 +609,13 @@ HTML that is displayed.
 \subsection{JavaScript}
 
 JavaScript is a dynamically typed scripting language found in any web
-browser created since 1996 when it was included in Netscape Navigator
+browser created since 1996, when it was included in Netscape Navigator
 2.0 and Internet Explorer 3.0. The language has been internationally
 standardized under the name EMCAScript since 1997. The usage of
-JavaScript on the client-side web browser has allowed the creation of
+JavaScript on client-side web browsers has allowed the creation of
 many of the interactive web applications we enjoy today such as Gmail.
 Gmail was one of the first web applications to feature an extensive use
-of JavaScript which dispatches user interface events and information
+of JavaScript, which dispatches user interface events and information
 queries back to the web server asynchronously without requiring a reload
 of the page. JavaScript is also the language that Node.js was written
 in, so it has some server side use cases.
@@ -622,14 +625,14 @@ in, so it has some server side use cases.
 HTML5 is a language and group of associated technologies used for the
 rendering of data on the World Wide Web. HTML5 is the fifth incarnation
 of the standard, which aims to add multimedia support for video, audio
-and graphics allowing web developers to rely and depend less on
+and graphics, allowing web developers to depend less on
 proprietary API's and plugins.
 
 \subsection{WebSQL}
 
-WebSQL is a web API which facilitates the creation of local client-side
-database tables which are queryable using a dialect of SQL. This is
-primarily used for persistent storage of more complex data which can not
+WebSQL is a web API that facilitates the creation of local client-side
+database tables that are queryable using a dialect of SQL. This is
+primarily used for persistent storage of more complex data that can not
 be contained within a web cookie due to storage limitations. WebSQL is
 based on SQLite and once was under consideration for inclusion into the
 HTML5 specification. Work on including it in HTML5 has since
@@ -652,9 +655,9 @@ applications like Gmail and Google Maps in 2005.
 
 jQuery is an efficient and concise JavaScript library which simplifies
 JavaScript programming for the client browser. It allows you to handle
-events, create animations, traverse HTML documents and perform AJAX
+events, create animations, traverse HTML documents, and perform AJAX
 interactions with ease. It is one of the most popular JavaScript
-libraries in use today being used by 52\% of the 10,000 most visited
+libraries in use today, being used by 52\% of the 10,000 most visited
 websites. It is used in this project to write event handlers and
 asynchronously post data to the web server.
 
@@ -662,14 +665,14 @@ asynchronously post data to the web server.
 
 The client web browsers need to get their current GPS position to
 effectively operate within Marionette. To this end, the mobile clients
-utilize the W3C Geolocation API which is a standard set of EMCAScript
-compliant objects to get the browsers physical location. On mobile
+utilize the W3C Geolocation API, which is a standard set of EMCAScript
+compliant objects to get the browser's physical location. On mobile
 phones it uses GPS, assisted GPS (aGPS), or WiFi based location
-services. On desktop web browsers it attempts to determine the location
+services. On desktop web browsers, it attempts to determine the location
 based on the IP address the client is accessing from. This API always
-asks for permission to retrieve your location, you can optionally deny
+asks for permission to retrieve the location, the user can optionally deny
 any request for this information. Figure \ref{geoloc}
-shows that an iOS and an Android web browser reports the devices
+shows that an iOS and an Android web browser reports the device's
 location with a similar fidelity using the Geolocation API.
 
 \begin{figure}[h!]
@@ -683,15 +686,15 @@ location with a similar fidelity using the Geolocation API.
 
 This project initially was conceived as a native iOS application, but
 expanding compatibility into most mobile web browsers became a more
-interesting proposition. iOS allows you to add meta tags which enables
-the web page to be saved to your home screen and allow custom rendering
+interesting proposition. iOS allows you to add meta tags that enable
+a web page bookmark to be saved to your home screen and allow custom rendering
 behavior for iOS when using mobile Safari. This project adds a splash
 screen and creates a UI similar to what a native iOS app would look
-like. When viewing the content on an Android phone, it looks similar
+like. When viewing the content on an Android phone, it looks similar,
 which allows for a solid cross platform interface. If you want to have
-access to more of the native iOS capabilities (e.g. mobile push) you can
-package the HTML, CSS and JavaScript together and create a native
-Objective-C app which exposes the webpage through a
+access to more of the native iOS capabilities (e.g., mobile push) you can
+package the HTML, CSS, and JavaScript together and create a native
+Objective-C app that exposes the webpage through a
 \texttt{UIWebView} class. An in-depth tutorial of
 creating this support is available at \cite{mightios}.
 
@@ -708,15 +711,15 @@ creating this support is available at \cite{mightios}.
 
 The basic premise of Space Battle! is to demonstrate a subset of basic
 multiplayer online game mechanics within the framework. Those mechanics
-are: location, trade and player vs. player combat. Starting a new game,
-you create a new spaceship or if you've played before continue with a
-spaceship that already exists. To board your spacecraft, the client
-browser needs a location which is provided by the Geolocation API. The
-latitude and longitude queried is normalized into coordinates in a
+are: location, trade, and player vs. player combat. Starting a new game,
+a player creates a new spaceship or if the player is returning, he can continue with a
+spaceship that already exists. To board a spacecraft, the client
+browser needs a location, which is provided by the Geolocation API. The
+latitude and longitude queried are normalized into coordinates in a
 reality overlay to where another player a mile or two away physically
-would be relatively close to you in game. Determining the exact
+would be relatively close in the game. Determining the exact
 normalization factor would be an exercise best suited during gameplay
-testing, for now the normalization factor will be somewhat arbitrary.
+testing; for now the normalization factor is arbitrary.
 The current implementation places starships within a 100x100 square grid
 for ease of prototyping.
 
@@ -724,37 +727,37 @@ The reality overlay is organized into sectors (20 light-year (ly)
 squares) and a given starship can perform long range sensor scans at a
 radius of approximately 17 light-years. A starship has short range
 sensors to about 500,000 kilometers (km). A given starship's weapon
-range is 150,000 km. Firing on other starships causes damage to your
-components that eventually require repair at in-game starbases run by
+range is 150,000 km. Firing on other starships causes damage to a starship's
+components, eventually necessitating repair at in-game starbases run by
 the game masters. Depending on a starship's coordinates relative to
-other starships in the general vicinity you can perform a variety of
+other starships in the general vicinity, a player can perform a variety of
 actions. This is a perfect use for the range query presented in
 \cite{zio2011p2p}. The current implementation scales
 down the vastness of space within a 100x100 2-D plane with 10x10
-sectors, starships have a long range sensor scan radius of 8 and weapons
+sectors; starships have a long range sensor scan radius of 8 and weapons
 range is within a radius of 1.
 
 The data storage mechanism relies on the use of WebSQL on the client web
-browser instances. For purposes of replication each client in a zone has
+browser instances. For purposes of replication, each client in a zone has
 a copy of each event such that if a client drops the browser connection
 the other nodes in the zone can potentially service the query. If a
-zones population approaches zero it can send a copy of the current
+zone's population approaches zero, it can send a copy of the current
 events to neighboring zones. The current Marionette implementation does
-not support this level of fault tolerance but it could be added as the
+not support this level of fault tolerance, but it could be added as the
 framework develops.
 
 \chapter{Overarching Design Considerations}
 
 The communications backbone is centralized within Marionette because
 mobile web browser connections are only open for as long as you are
-viewing the page in most cases. On iOS devices, if you switch away from
+viewing the page. On iOS devices, if you switch away from
 the web browser to a different application the WebSocket in some cases
 may not have persisted. Utilizing a centralized communications backbone
 is the simplest way to maintain continuity between the web clients
 within the scope of this work. No game specific data is stored on the
 message broker. All pieces of the communications backbone (Sinatra,
-Juggernaut and Redis) are capable of scaling. With Juggernaut and
-Sinatra, you can spawn more instances behind a load balancer and Redis
+Juggernaut, and Redis) are capable of scaling. With Juggernaut and
+Sinatra, one can spawn more instances behind a load balancer, and Redis
 supports replication.
 
 \begin{figure}[h!]
@@ -770,8 +773,8 @@ supports replication.
 
 The Marionette framework consists of both server and client code. The
 events and queries are sufficiently generalized to be utilized in a wide
-variety of applications. Specialization can be accomplished via object
-oriented inheritance or by injecting a serialized object inside the
+variety of applications. Specialization can be accomplished via object-oriented 
+inheritance or by injecting a serialized object inside an
 event itself. Space Battle! opted to use simple type inheritance to
 reduce the number of serialization and deserialization methods between
 Ruby and Javascript. A client web browser pulls down all the javascript
@@ -779,7 +782,7 @@ by visiting the website's root with a GET request in HTML. Figure
 \ref{files} shows the files that get pulled down by the
 client browser on the right and all of the server files on the left. The
 WebSQL database tables are created if they do not currently exist. The
-server holds static counters for client\_id, event\_id and query\_id.
+server holds static counters for client\_id, event\_id, and query\_id.
 Whenever the client browser makes a POST request intending for the
 action to be published via Juggernaut, the server tacks on the unique id
 and propagates the request to the applicable zones. The response to the
@@ -787,8 +790,8 @@ POST request contains the id that was assigned so the originating client
 can update its records.
 
 The jug.js file is responsible for instantiating the jug object defined
-from application.js which handles interaction with the Juggernaut
-instance. The client browser can subscribe to any channel and the
+from application.js, which handles interaction with the Juggernaut
+instance. The client browser can subscribe to any channel, and the
 current implementation subscribes automatically to the channels shown in
 Table \ref{jugzones}.
 
@@ -809,11 +812,11 @@ Table \ref{jugzones}.
 
 Publishing to /global would send the content to all connected nodes. The
 /zones channel is also global but used more often to propagate zone
-updates. When you subscribe to a channel it executes a callback that the
+updates. When you subscribe to a channel, it executes a callback that the
 Ruby server can listen to. The Ruby server can then assign a zone\_id
-based on the current topology of nodes which will then trigger the web
+based on the current topology of nodes, which will then trigger the web
 browser to subscribe to that zone. After the client has subscribed to
-its zone it then starts receiving queries that the client can begin
+its zone, it then starts receiving queries that the client can begin
 resolving.
 
 \section{Space Battle!}
@@ -824,14 +827,14 @@ starships is enabled via the use of the range query. Trade and combat
 mechanics were not able to be implemented, but can be added in very
 easily as they are built off the primitive query and event objects. Web
 clients pilot a starship that has a location normalized into a 100x100
-grid based on the device's geographic location. Once the ship is boarded
-it can then begin scanning for nearby ships via range query. The results
+grid based on the device's geographic location. Once the ship is boarded,
+it can then begin scanning for nearby ships via a range query. The results
 of that query will be a collection of other starships that matched and
 their locations. If a starship is within a radius of one it is
 considered to be within weapons range and can be fired upon. The
 implementation is currently very simplistic, however it can be expanded
 upon to increase gameplay and interaction value by adding more events
-which can be queried via range query.
+that can be queried via range query.
 
 \section{Screenshots}
 
@@ -844,7 +847,7 @@ which can be queried via range query.
 
 An example game of Space Battle! is shown in Figure
 \ref{screenshot}. The simplified game implementation
-has a few UI buttons, a text console and a couple of graphical gauges.
+has a few UI buttons, a text console, and a couple of graphical gauges.
 The gauge on the left shows the results of the sensor sweep, and the
 gauge on the right shows if there are any ships within attack range.
 Filled in squares on the right side indicate that there is a ship that
@@ -864,7 +867,7 @@ GitHub \cite{marionette}. The implementation will be
 steadily enhanced over time as the framework matures as the concepts of
 mobile multiplayer online gaming and grassroots information sharing are
 explored. The code is licensed under a Creative Commons
-Attribution-NonCommercial-ShareAlike (BY-NC-SA) license which makes the
+Attribution-NonCommercial-ShareAlike (BY-NC-SA) license, which makes the
 code accessible to those interested in studying and enhancing the
 existing framework.
 
@@ -874,7 +877,7 @@ To test the interaction between multiple mobile clients, a test harness
 was constructed that replicated mobile device connections as desktop
 browser tabs. Using Watir bindings for Ruby, it is a fairly simple
 matter to create multiple instances of Google Chrome, open multiple tabs
-within each and run a stress test that simulates user interaction.
+within each, and run a stress test that simulates user interaction.
 Chrome is WebKit based so it represents a natural analog to a mobile web
 browser. The only difference would be the processing power available to
 the browser would likely be higher on a desktop than on a mobile device.
@@ -897,7 +900,7 @@ be simplified to not build Ruby equivalent classes for the event and
 query objects in Javascript since they are just getting passed to
 Juggernaut. This was a remnant of an earlier idea that needs to be
 cleaned up and would reduce the complexity of the serialization and
-deserialization routines in Javascript. In the initial implementation
+deserialization routines in Javascript. In the initial implementation,
 all of the locations were relatively unchanged in the test harness. Some
 work would need to be done towards deciding when to adjust the zone
 allocations after a client has physically moved out of its originating
@@ -915,10 +918,10 @@ mobile devices without requiring the installation of additional software
 or proprietary plugins. To enable this level of communication between
 mobile devices a new framework was presented, Marionette. It utilizes a
 pub-sub service in conjunction with events distributed amongst the
-client devices which could be queried by means of a range query. This
+client devices that could be queried by means of a range query. This
 technique would allow the creation of grassroots information sharing
 relative to the user's surroundings. This paper also presented a mobile
-multiplayer online game called Space Battle! which utilizes Marionette
+multiplayer online game called Space Battle!, which utilizes Marionette
 as a means of communicating game events to other mobile devices. Several
 multiplayer online game mechanics work well with the event and query
 model that Marionette provides. Explorations with respect to the
