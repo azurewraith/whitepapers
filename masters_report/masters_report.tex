@@ -459,7 +459,7 @@ shortest path to all of the other nodes. The zones in Marionette (known
 as communities in \cite{yoneki2007socio}) are defined
 by the Voronoi tessellation as defined in
 \cite{zio2011p2p}, but the concept of using pub-sub to
-facilitate communication is prevalent here. In Marionette, mobile
+facilitate communication is prevalent in Marionette. In Marionette, mobile
 clients can publish information as well as be subscribers in a few
 different levels of spatially progressive granularity. Distributing the
 events and queries within zones using a pub-sub methodology allows for
@@ -525,11 +525,20 @@ successive time intervals.
 
 \chapter{Technology}
 
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=0.6]{0.png}
+\caption{Marionette High Level Architecture}
+\label{hla}
+\end{figure}
+
 \section{Architecture}
 
 Marionette consists of a pub-sub service provided by Juggernaut backed
-by a Redis data store, and a lightweight web application framework
-called Sinatra. Together they allow soft real-time communication between
+by a Redis\footnote{Redis open source, advanced key-value store - \url{http://redis.io/}} 
+data store, and a lightweight web application framework
+called Sinatra\footnote{Lightweight web applications with Sinatra - \url{http://www.sinatrarb.com/}}. 
+Together they allow soft real-time communication between
 the mobile devices that are playing the Space Battle! game. Figure
 \ref{hla} shows the High Level Architecture (HLA) of
 Marionette. It also outlines the concept of zones, which are polygons in
@@ -540,33 +549,17 @@ zones that overlap the space defined by the range query in orange and
 publishes the query to them. The clients in the three zones are notified
 of the query and if any client has an event that matches the query, it
 gets sent back to node three. If there are multiple matches from
-different nodes, node three will also receive them. It is expected that
+different nodes, node three will also receive them. It is expected 
+(but not ensured in the current implementation) that
 the node that generated the range query will receive the responses
 asynchronously within a set time window and can then act on any
 responses received at the end of that time interval.
 
-\begin{figure}[h!]
-\centering
-\includegraphics[scale=0.6]{0.png}
-\caption{Marionette High Level Architecture}
-\label{hla}
-\end{figure}
-
 \section{Server Side}
-
-\subsection{Node.js}
-
-Node.js is an event driven software system that is built from the
-ground up to have asynchronous I/O. This allows Node.js applications,
-which are mainly server based, to be highly scalable while minimizing
-overhead with non-blocking I/O. Node.js excels at simple POST and GET
-processing and is ideal for the communications backbone of this
-framework. Additionally, Node.js can span multiple cores and even
-multiple machines providing simple scalability.
 
 \subsection{Juggernaut}
 
-Juggernaut is a pub-sub based communications mechanism which provides a
+Juggernaut is a pub-sub based communications mechanism based on Node.js which provides a
 soft real-time connection to clients. It is built on top of Node.js and
 is geared towards communication with client web browsers. It supports a
 myriad of different browser networking protocols through the use of
@@ -574,30 +567,46 @@ Socket.IO, most notably WebSocket and Adobe Flash Socket. Socket.IO is
 an extension of WebSocket that adds support for heartbeats, timeouts,
 and disconnection support for use in soft real-time web applications
 like Marionette. If the client browser does not support WebSockets, it
-will fall back to a networking protocol that is supported. Clients can
+will fall back to a networking protocol that is supported like Adobe Flash 
+Socket with no impact on Juggernaut's functionality. Clients can
 subscribe to multiple channels at once, each one having its own callback
 on the client side.
+
+\subsection{Node.js}
+
+Node.js\footnote{Node.js, a platform built for easily building fast, 
+scalable network applications \linebreak \url{http://nodejs.org/}} is an event 
+driven software system that is built from the
+ground up to have asynchronous I/O. This allows Node.js applications,
+which are mainly server based like Juggernaut, to be highly scalable while minimizing
+overhead with non-blocking I/O. Node.js excels at simple POST and GET
+processing and is ideal for the communications backbone of this
+framework. Additionally, Node.js can span multiple cores and even
+multiple machines providing simple scalability.
 
 \subsection{Redis}
 
 Redis is a networked lightweight in-memory key-value data store. The
 whole dataset is stored in RAM, but Redis can optionally be configured
 for persistence, fulfilling durability requirements. Redis also supports
-master-slave replication, which allows Redis to become decentralized. A
+master-slave replication, which allows Redis to become decentralized. 
+Durability and replication are not used within Marionette. A
 unique aspect of Redis is that the values it stores can be more than
-just strings. It can store data types such as lists of strings, sets of
+just strings unlike LevelDB\footnote{LevelDB, A fast and lightweight key/value 
+database library by Google. \linebreak \url{http://code.google.com/p/leveldb/}}. 
+It can store data types such as lists of strings, sets of
 strings, sorted sets of strings, and hashes. There are commands that are
 available to each data type. For instance, you can perform operations
 like difference, union and intersection on lists, sets and sorted sets.
-Juggernaut uses Redis as its primary data storage mechanism such that it
+Every Juggernaut instance uses Redis as its primary data storage mechanism such that it
 can provide channel/subscriber data quickly to Node.js connections.
 
 \subsection{Sinatra}
 
 Sinatra is a lightweight web application framework that abstracts
 server-side web development in a clean Domain Specific Language (DSL).
-It is widely regarded as a barebones Ruby on Rails (RoR), although there are
-features in RoR that Sinatra can only gain through the use of add-ons.
+It is widely regarded as a barebones Ruby on Rails (RoR).
+Sinatra is used to create simple web applications quickly without a lot of configuration.
 Several HTML templating options are available for use with Sinatra
 making it easy to create simple data and event driven websites. In this
 project, asynchronous POST requests from the client web browser are
@@ -624,9 +633,9 @@ in, so it has some server side use cases.
 
 HTML5 is a language and group of associated technologies used for the
 rendering of data on the World Wide Web. HTML5 is the fifth incarnation
-of the standard, which aims to add multimedia support for video, audio
-and graphics, allowing web developers to depend less on
-proprietary API's and plugins.
+of the standard which is currently in Working Draft state, which aims to 
+add multimedia support for video, audio and graphics, allowing web 
+developers to depend less on proprietary API's and plugins.
 
 \subsection{WebSQL}
 
@@ -636,7 +645,8 @@ primarily used for persistent storage of more complex data that can not
 be contained within a web cookie due to storage limitations. WebSQL is
 based on SQLite and once was under consideration for inclusion into the
 HTML5 specification. Work on including it in HTML5 has since
-discontinued, however the WebKit browsers still ship with the
+discontinued\footnote{Work on the WebSQL specification ceased citing lack 
+of independent implementations (not using SQLite as the backend) as the reasoning.}, however the WebKit browsers still ship with the
 functionality included. The technology set to replace WebSQL is called
 Indexed Database API (IndexedDB) and does not have any stable support
 within any browsers currently.
@@ -684,14 +694,15 @@ location with a similar fidelity using the Geolocation API.
 
 \subsection{iOS Customization}
 
-This project initially was conceived as a native iOS application, but
+Space Battle! initially was conceived as a native iOS application, but
 expanding compatibility into most mobile web browsers became a more
 interesting proposition. iOS allows you to add meta tags that enable
 a web page bookmark to be saved to your home screen and allow custom rendering
 behavior for iOS when using mobile Safari. This project adds a splash
 screen and creates a UI similar to what a native iOS app would look
 like. When viewing the content on an Android phone, it looks similar,
-which allows for a solid cross platform interface. If you want to have
+which allows for a solid cross platform interface. If a developer building 
+an application with Marionette wants to have
 access to more of the native iOS capabilities (e.g., mobile push) you can
 package the HTML, CSS, and JavaScript together and create a native
 Objective-C app that exposes the webpage through a
@@ -710,7 +721,7 @@ creating this support is available at \cite{mightios}.
 \section{Basic Premise}
 
 The basic premise of Space Battle! is to demonstrate a subset of basic
-multiplayer online game mechanics within the framework. Those mechanics
+multiplayer online game mechanics within Marionette. Those mechanics
 are: location, trade, and player vs. player combat. Starting a new game,
 a player creates a new spaceship or if the player is returning, he can continue with a
 spaceship that already exists. To board a spacecraft, the client
@@ -741,8 +752,10 @@ The data storage mechanism relies on the use of WebSQL on the client web
 browser instances. For purposes of replication, each client in a zone has
 a copy of each event such that if a client drops the browser connection
 the other nodes in the zone can potentially service the query. If a
-zone's population approaches zero, it can send a copy of the current
-events to neighboring zones. The current Marionette implementation does
+zone's population approaches zero, it can instruct the remaining nodes to 
+send a copy of the current events to neighboring zones. When a zone no longer 
+has any occupants, it merges with an adjacent zone and queries resolve within 
+the expanded zone. The current Marionette implementation does
 not support this level of fault tolerance, but it could be added as the
 framework develops.
 
@@ -750,15 +763,18 @@ framework develops.
 
 The communications backbone is centralized within Marionette because
 mobile web browser connections are only open for as long as you are
-viewing the page. On iOS devices, if you switch away from
-the web browser to a different application the WebSocket in some cases
-may not have persisted. Utilizing a centralized communications backbone
+viewing the page. On a mobile device, if a user context switches away from
+the web browser to a different application, the WebSocket may have disconnected 
+temporarily and may be unable to answer queries. Utilizing a 
+centralized communications backbone
 is the simplest way to maintain continuity between the web clients
 within the scope of this work. No game specific data is stored on the
 message broker. All pieces of the communications backbone (Sinatra,
-Juggernaut, and Redis) are capable of scaling. With Juggernaut and
-Sinatra, one can spawn more instances behind a load balancer, and Redis
-supports replication.
+Juggernaut, and Redis) are capable of scaling allowing room to grow 
+should the need arise. With Juggernaut and Sinatra, one can spawn more 
+instances behind a load balancer, and Redis supports replication.
+
+\chapter{Implementation}
 
 \begin{figure}[h!]
 \centering
@@ -766,8 +782,6 @@ supports replication.
 \caption{Marionette and Space Battle! files}
 \label{files}
 \end{figure}
-
-\chapter{Implementation}
 
 \section{Marionette}
 
@@ -812,7 +826,8 @@ Table \ref{jugzones}.
 
 Publishing to /global would send the content to all connected nodes. The
 /zones channel is also global but used more often to propagate zone
-updates. When you subscribe to a channel, it executes a callback that the
+updates. All nodes in a zone receive an event when a new zone is added, for example. 
+When you subscribe to a channel, it executes a callback that the
 Ruby server can listen to. The Ruby server can then assign a zone\_id
 based on the current topology of nodes, which will then trigger the web
 browser to subscribe to that zone. After the client has subscribed to
@@ -828,7 +843,12 @@ mechanics were not able to be implemented, but can be added in very
 easily as they are built off the primitive query and event objects. Web
 clients pilot a starship that has a location normalized into a 100x100
 grid based on the device's geographic location. Once the ship is boarded,
-it can then begin scanning for nearby ships via a range query. The results
+it can then begin scanning for nearby ships via a range query. The range 
+query in this case contains client's identification number, the device's 
+present location, the radius of its sensor sweep, and the type of the object 
+the starship is querying which is other starships. This can be expressed in 
+shorthand as \texttt{RQ\{client\_id, (x,y), sensor\_distance, typeof(Starship)\}} 
+The results
 of that query will be a collection of other starships that matched and
 their locations. If a starship is within a radius of one it is
 considered to be within weapons range and can be fired upon. The
