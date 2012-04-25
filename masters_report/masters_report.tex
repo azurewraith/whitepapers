@@ -383,16 +383,21 @@ effectively communicate between these client mobile web browsers in
 spatio-temporal contexts.
 
 Marionette aims to enable distributed spatio-temporal information
-exchange via something as simple as opening a tab on a web browser on a
-mobile (or even desktop) device. Client side web browsers have
-historically been limited in their capability for data storage and
-processing but are catching up to deliver rich interactive experiences
+exchange via something as simple as opening a tab on a web browser 
+on a mobile device. Web browsers in general have
+historically been limited in their capability for persistent data 
+storage\footnote{Prior to WebSQL, web developers were constrained by 
+HTTP cookies that had a maximum storage capacity of only 4 Kilobytes} 
+and processing\footnote{Javascript engines have improved through optimization, as well as 
+libraries and best practices for the Javascript language on the web} 
+but are catching up to deliver rich interactive experiences
 that rival thick client applications. Most mobile device browsers have
-these capabilities now, which is advantageous for Marionette because it
-has virtually no installation requirements. It operates under the hood
+increased storage and access to increased processing power, which is 
+advantageous for Marionette because it has virtually no installation 
+requirements and can be run on stock mobile browsers. It operates under the hood
 within a browser session and presents the potential for not only content
-delivery via a web portal, but also for content absorption based on the
-user's location and activities.
+delivery via a web portal, but also for the absorption of spatially 
+contextual information based on the user's location and activities.
 
 Besides mobile gaming, Marionette has other potential uses. Picture a
 high profile public event such as Austin City Limits (ACL) or South by
@@ -402,24 +407,30 @@ with events happening at various times. The acts are relatively short,
 but there are many happening concurrently. Event goers tend to migrate
 towards better live performances discovered on-the-fly through word of mouth,
 primarily through social networks like Twitter. With Marionette one
-could provide a web portal specifically for attendees in a grassroots
+could provide a web portal specifically for attendees to create and distribute 
+information in a grassroots
 fashion where they can get the latest updates and inform other attendees
 if there is an act near them that is exceeding expectations and should
-not be missed. Marionette would provide static content such as a
-schedule and maps to draw attendees and allow users to rate the
-experiences all around them. This is well suited towards Marionette
-because all of the discussed data has an expiration date, which makes it
-short lived and meaningful only for a short period of time. The data is
+not be missed. An application using Marionette can provide static content 
+similar to what a typical website would provide such as a
+schedule and maps to draw attendees to participate.  While visiting, the 
+application can allow users to rate the experiences all around them which 
+gets mixed into the static data dynamically in an asynchronous fashion. 
+All of the dynamic data has an expiration date, which makes it
+short lived and meaningful only for a short period of time which is ideal 
+for event attendees as they would not be interested in stale data about 
+something that has already happened. The data is
 only available to those viewing the service and not shared publicly on a
 social network.
 
 This paper also presents a mobile multiplayer online web game entitled
-Space Battle! played within mobile browsers. The event and range query
-model work well for a number of multiplayer game mechanics such as
-determining the location of other players, trade and player vs. player
-combat. A mobile device's physical location determines where its
-starship is located inside the game, and a player can interact with other players
-that share physical locality. To accomplish these gameplay
+Space Battle! which is built on top of Marionette to allow the game to be played amongst 
+mobile browsers. The proposed method for information creation and retrieval 
+presented in the next section works well towards determining the location of other 
+players within the game. 
+A mobile device's physical location determines where it is located inside 
+the game, and a player can interact with other players
+that are physically nearby. To accomplish these gameplay
 goals, Marionette is used as a medium for propagating in game events.
 
 \chapter{Related Work}
@@ -434,10 +445,11 @@ Marionette is based on the work presented in
 spatial context. The authors create a Voronoi tessellation based
 segmentation relative to the spatial locations of the nodes in its P2P
 overlay network. Marionette uses a similar construct with regards to the
-creation of zones which, are created based on physical locality, as well
+creation of zones which, are created based on other mobile devices nearby, as well
 as adopting the same ``range query'' model. When resolving a range query,
-Marionette gathers up a subset of zones within the radius of the query
-and broadcasts the request to them. If a client node matches the query,
+Marionette calculates a subset of zones where the circular query area with 
+query radius \textit{r} intersects and broadcasts the request to them. If a client 
+node matches the query based on locality and object type requested,
 it sends the event(s) that matched to the node that originated the
 query. The pattern of resolving queries is similar to how it is
 performed in \cite{zio2011p2p}. Where Marionette
@@ -454,16 +466,17 @@ amongst users that share physical locality.
 In \cite{yoneki2007socio}, the authors create a
 Socio-Aware Overlay for Publish/Subscribe based communications for Delay
 Tolerant Networks (DTNs). It utilizes a concept known as ``Node
-Centrality'' to determine broker nodes and communities, those with the
+Centrality'' to determine communities and broker nodes, those with the
 shortest path to all of the other nodes. The zones in Marionette (known
 as communities in \cite{yoneki2007socio}) are defined
 by the Voronoi tessellation as defined in
 \cite{zio2011p2p}, but the concept of using pub-sub to
 facilitate communication is prevalent in Marionette. In Marionette, mobile
 clients can publish information as well as be subscribers in a few
-different levels of spatially progressive granularity. Distributing the
+different levels of spatially progressive granularity ranging from global 
+subscriptions to subscriptions where only one client is subscribed. Distributing the
 events and queries within zones using a pub-sub methodology allows for
-more flexibility architecturally and allows for scalability where other
+more flexibility architecturally where other
 P2P based approaches have to choose their routing protocols carefully
 and tie it specifically to a usage model. Flexibility and
 scalability are important towards utilizing Marionette for grassroots
@@ -473,10 +486,9 @@ In \cite{wang2005event}, the authors define a
 spatio-temporal phenomenon as a collection of processes, entities, and
 events. Processes bind entities and events, and events cause changes in the
 system. A similar concept is presented in
-\cite{chen1998event}. A stretch goal for this work is
-to be able to link the various game objects (entities) with events. The
-interaction between entities and events will be linked via a structure
-which will be similar to a process described in this work.
+\cite{chen1998event}. In Marionette, events are linked to game entities as every event
+has an entity identifier.  Game participants can then query for those events
+and use the results to discover how the system has changed over time.
 
 \section{Other Work}
 
@@ -488,7 +500,8 @@ does not preserve locality in storage. The only commonality that
 Marionette has with the bazaar concept is locality in querying. FLORA
 \cite{kokku2008enabling} is similar in the sense that
 it uses a hybrid P2P and pub-sub architecture, but Marionette spreads the
-data throughout the network. Additionally, Marionette does not focus on
+data throughout the client devices and only utilizes the message broker to
+pass messages. Additionally, Marionette does not focus on
 networking at the carrier level like FLORA does. It is assumed that the
 query propagation bandwidth in this work will be inconsequential next to
 audio and visual streaming allowed by most carriers today.
@@ -694,13 +707,13 @@ location with a similar fidelity using the Geolocation API.
 
 \subsection{iOS Customization}
 
-Space Battle! initially was conceived as a native iOS application, but
-expanding compatibility into most mobile web browsers became a more
-interesting proposition. iOS allows you to add meta tags that enable
-a web page bookmark to be saved to your home screen and allow custom rendering
-behavior for iOS when using mobile Safari. This project adds a splash
+Space Battle! is compatibile with most mobile web browsers, however there is 
+some benefit to emulating a native app's look and feel. To facilitate this, 
+iOS allows you to add HTML meta tags that enable
+a web page bookmark to be saved to the device's ``home screen'' and allow 
+custom HTML rendering behavior when using an iOS web browser. Space Battle! adds a splash
 screen and creates a UI similar to what a native iOS app would look
-like. When viewing the content on an Android phone, it looks similar,
+like. When viewing the same HTML on an Android phone, it looks similar,
 which allows for a solid cross platform interface. If a developer building 
 an application with Marionette wants to have
 access to more of the native iOS capabilities (e.g., mobile push) you can
