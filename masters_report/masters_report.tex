@@ -366,8 +366,8 @@ developers opt to support one platform or the other due to the
 differences of the respective platforms. Additionally, there are several
 other mobile platforms that games could be implemented in but frequently are
 skipped over in favor of a mobile OS with more market penetration. Most
-of the major players in the mobile browser space use WebKit
-\footnote{The WebKit Open Source Project - \url{http://www.webkit.org/}} based
+of the major players in the mobile browser space use WebKit\footnote{The 
+WebKit Open Source Project - \url{http://www.webkit.org/}} based
 implementations for their web browser, even those used in Blackberry and
 Symbian OS devices. The mobile browser space is becoming more attractive
 for game developers as well. The \texttt{<canvas>} element in 
@@ -384,20 +384,28 @@ spatio-temporal contexts.
 
 Marionette aims to enable distributed spatio-temporal information
 exchange via something as simple as opening a tab on a web browser 
-on a mobile device. Web browsers in general have
+on a mobile device. Current solutions in this area require native OS 
+applications, specialized hardware, or specialized browser plugins. 
+In the past, web browsers in general have
 historically been limited in their capability for persistent data 
 storage\footnote{Prior to WebSQL, web developers were constrained by 
 HTTP cookies that had a maximum storage capacity of only 4 Kilobytes} 
 and processing\footnote{Javascript engines have improved through optimization, as well as 
 libraries and best practices for the Javascript language on the web} 
 but are catching up to deliver rich interactive experiences
-that rival thick client applications. Most mobile device browsers have
+that rival thick client applications. Additionally, many older web browsers
+lacked the technology to allow the server to push data to the web client 
+in soft real-time. Most mobile device browsers today have
 increased storage and access to increased processing power, which is 
 advantageous for Marionette because it has virtually no installation 
-requirements and can be run on stock mobile browsers. It operates under the hood
+requirements and can be run on stock mobile browsers where existing 
+solutions can not. Marionette also adds soft real-time push data capabilities 
+into mobile web development. It operates under the hood
 within a browser session and presents the potential for not only content
 delivery via a web portal, but also for the absorption of spatially 
-contextual information based on the user's location and activities.
+contextual information based on the user's location and activities. 
+Marionette opens the door for implementing applications in mobile web browsers
+instead of writing apps in multiple native operating systems.
 
 Besides mobile gaming, Marionette has other potential uses. Picture a
 high profile public event such as Austin City Limits (ACL) or South by
@@ -448,15 +456,15 @@ overlay network. Marionette uses a similar construct with regards to the
 creation of zones which, are created based on other mobile devices nearby, as well
 as adopting the same ``range query'' model. When resolving a range query,
 Marionette calculates a subset of zones where the circular query area with 
-query radius \textit{r} intersects and broadcasts the request to them. If a client 
+radius \textit{r} intersects and broadcasts the request to them. If a client 
 node matches the query based on locality and object type requested,
 it sends the event(s) that matched to the node that originated the
-query. The pattern of resolving queries is similar to how it is
-performed in \cite{zio2011p2p}. Where Marionette
-differs is in the use of a centralized (but scalable) message broker
+query. Where Marionette
+differs is in the use of a centralized message broker
 that keeps tabs on the state of each node in the network as opposed to
 being purely P2P. Another difference is that the mobile browsers
-themselves can become peers without requiring proxy peers.
+themselves become peers without requiring proxy peers, meaning that they 
+do not require an additional land-locked peer to fully participate in network operations.
 One disadvantage with Marionette's methodology is that there is a
 dependency on the message broker in favor of true P2P. The flow of
 events and then querying for them in \cite{zio2011p2p}
@@ -478,16 +486,19 @@ subscriptions to subscriptions where only one client is subscribed. Distributing
 events and queries within zones using a pub-sub methodology allows for
 more flexibility architecturally where other
 P2P based approaches have to choose their routing protocols carefully
-and tie it specifically to a usage model. Flexibility and
-scalability are important towards utilizing Marionette for grassroots
-deployments and online web gaming as described in the introduction.
+and tie it specifically to a usage model. Flexibility is gained through 
+having the ability to tweak the maximum number of clients per zone and maximum
+zone size geographically to suit a plethora of different usage models. 
+Flexibility is important towards
+utilizing Marionette for grassroots deployments and online web gaming as 
+described in the introduction.
 
 In \cite{wang2005event}, the authors define a
 spatio-temporal phenomenon as a collection of processes, entities, and
 events. Processes bind entities and events, and events cause changes in the
 system. A similar concept is presented in
 \cite{chen1998event}. In Marionette, events are linked to game entities as every event
-has an entity identifier.  Game participants can then query for those events
+has an entity identifier. Game participants can then query for those events
 and use the results to discover how the system has changed over time.
 
 \section{Other Work}
@@ -583,7 +594,7 @@ like Marionette. If the client browser does not support WebSockets, it
 will fall back to a networking protocol that is supported like Adobe Flash 
 Socket with no impact on Juggernaut's functionality. Clients can
 subscribe to multiple channels at once, each one having its own callback
-on the client side.
+on the client side. In Marionette, Juggernaut is utilized as the central message broker.
 
 \subsection{Node.js}
 
@@ -616,7 +627,7 @@ can provide channel/subscriber data quickly to Node.js connections.
 
 \subsection{Sinatra}
 
-Sinatra is a lightweight web application framework that abstracts
+Sinatra is a lightweight web application framework written in Ruby that abstracts
 server-side web development in a clean Domain Specific Language (DSL).
 It is widely regarded as a barebones Ruby on Rails (RoR).
 Sinatra is used to create simple web applications quickly without a lot of configuration.
@@ -624,7 +635,8 @@ Several HTML templating options are available for use with Sinatra
 making it easy to create simple data and event driven websites. In this
 project, asynchronous POST requests from the client web browser are
 processed by Sinatra as well as generating the data and event driven
-HTML that is displayed.
+HTML that is displayed.  In Marionette, Sinatra is used to answer POST requests
+of the individual web clients such that events and queries can be propagated through Juggernaut.
 
 \section{Client Side}
 
@@ -640,15 +652,33 @@ Gmail was one of the first web applications to feature an extensive use
 of JavaScript, which dispatches user interface events and information
 queries back to the web server asynchronously without requiring a reload
 of the page. JavaScript is also the language that Node.js was written
-in, so it has some server side use cases.
+in, so it has some server side use cases. In Marionette, JavaScript handles
+the client side connection to Juggernaut and links button presses to asynchronous
+POST request generation.
 
-\subsection{HTML5}
+\subsection{AJAX}
 
-HTML5 is a language and group of associated technologies used for the
-rendering of data on the World Wide Web. HTML5 is the fifth incarnation
-of the standard which is currently in Working Draft state, which aims to 
-add multimedia support for video, audio and graphics, allowing web 
-developers to depend less on proprietary API's and plugins.
+Asynchronous JavaScript and XML (AJAX) is a conglomeration of web
+development technologies used to create client-side asynchronous web
+applications. These technologies include HTML, CSS, XML (mostly JSON is
+used now), the Document Object Model (DOM), and XMLHttpRequest with
+JavaScript to unify them. The term AJAX was derived based on the
+technology used in implementing Google's highly interactive web
+applications like Gmail and Google Maps in 2005. In Marionette, AJAX is used to 
+inform the web server that a client needs to propagate a new event or query
+through Juggernaut.
+
+\subsection{jQuery}
+
+jQuery is an efficient and concise JavaScript library which simplifies
+JavaScript programming for the client browser. It allows you to handle
+events, create animations, traverse HTML documents, and perform AJAX
+interactions with ease. It is one of the most popular JavaScript
+libraries in use today, being used by 52\% of the 10,000 most visited
+websites. It is used in this project to write event handlers and
+asynchronously post data to the web server. In Marionette, jQuery provides
+a convenience function for AJAX based postbacks. In Space Battle!, jQuery provides
+event handlers for UI events like button presses.
 
 \subsection{WebSQL}
 
@@ -662,27 +692,18 @@ discontinued\footnote{Work on the WebSQL specification ceased citing lack
 of independent implementations (not using SQLite as the backend) as the reasoning.}, however the WebKit browsers still ship with the
 functionality included. The technology set to replace WebSQL is called
 Indexed Database API (IndexedDB) and does not have any stable support
-within any browsers currently.
+within any browsers currently. In Marionette, WebSQL is the primary event storage
+mechanism on the client web browser. Received query requests at a given client node 
+searches its WebSQL database and the node returns its matches.
 
-\subsection{AJAX}
+\subsection{HTML5}
 
-Asynchronous JavaScript and XML (AJAX) is a conglomeration of web
-development technologies used to create client-side asynchronous web
-applications. These technologies include HTML, CSS, XML (mostly JSON is
-used now), the Document Object Model (DOM), and XMLHttpRequest with
-JavaScript to unify them. The term AJAX was derived based on the
-technology used in implementing Google's highly interactive web
-applications like Gmail and Google Maps in 2005.
-
-\subsection{jQuery}
-
-jQuery is an efficient and concise JavaScript library which simplifies
-JavaScript programming for the client browser. It allows you to handle
-events, create animations, traverse HTML documents, and perform AJAX
-interactions with ease. It is one of the most popular JavaScript
-libraries in use today, being used by 52\% of the 10,000 most visited
-websites. It is used in this project to write event handlers and
-asynchronously post data to the web server.
+HTML5 is a language and group of associated technologies used for the
+rendering of data on the World Wide Web. HTML5 is the fifth incarnation
+of the standard which is currently in Working Draft state, which aims to 
+add multimedia support for video, audio and graphics, allowing web 
+developers to depend less on proprietary API's and plugins. Space Battle!
+uses HTML5 to render two simple graphical indicators in its UI.
 
 \subsection{Location Services}
 
@@ -696,7 +717,7 @@ based on the IP address the client is accessing from. This API always
 asks for permission to retrieve the location, the user can optionally deny
 any request for this information. Figure \ref{geoloc}
 shows that an iOS and an Android web browser reports the device's
-location with a similar fidelity using the Geolocation API.
+location with a similar fidelity using the Geolocation API. Marionette uses the W3C Geolocation API to find the device's current latitude and longitude and uses that information to generate events and match queries.
 
 \begin{figure}[h!]
 \centering
